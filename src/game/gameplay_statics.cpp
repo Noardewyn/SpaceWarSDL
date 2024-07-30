@@ -20,14 +20,15 @@
 #include "components/collision_handler_component.h"
 #include "components/damage_dealer_component.h"
 #include "components/pool_property_component.h"
+#include "components/inactive_component.h"
+#include "components/thruster_component.h"
 
 #include <SDL_pixels.h>
-#include "components/inactive_component.h"
 
 void GameplayStatics::SpawnSun()
 {
   Entity sun = Game::CreateEntity("Sun");
-  auto& rigidbody_comp = sun.AddComponent<RigidBodyComponent>(1300.f, true);
+  auto& rigidbody_comp = sun.AddComponent<RigidBodyComponent>(900.f, true);
   rigidbody_comp.radial_velocity = 400.f;
   rigidbody_comp.radial_deceleration_coef = 1.0f;
 
@@ -67,6 +68,7 @@ void GameplayStatics::SpawnPlayer()
   entity.AddComponent<CircleCollisionShapeComponent>(texture_width);
   entity.AddComponent<CollisionHandlerComponent>(CollisionMask::PLAYER, CollisionMask(CollisionMask::COLLECTABLE | CollisionMask::ENEMY | CollisionMask::PROJECTILE));
   entity.AddComponent<DamageDealerComponent>(10.f, entity);
+  entity.AddComponent<ThrusterComponent>(glm::vec2(-50.f, -50.f));
 
   auto& health_comp = entity.AddComponent<HealthComponent>(5.f);
 
@@ -105,9 +107,13 @@ void SpawnEnemyShip(const glm::vec2& position, CollectableType collectable)
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = EnemyType::SHOOTER;
   enemy_comp.rotation_speed = 200.0;
-  enemy_comp.acceleration = glm::vec2(200.f, 200.f);
-  enemy_comp.ai_state = AIState::MOVE;
+  enemy_comp.acceleration = glm::vec2(400.f, 400.f);
+
+  enemy_comp.ai_state = AIState::SEEK;
   enemy_comp.collectable_to_spawn = collectable;
+  enemy_comp.action_length = 5.f;
+  enemy_comp.action_delay = 0.2f;
+  enemy_comp.last_action_time = GameUtils::GetTime();
   enemy_comp.level = 0;
 
   float texture_width = transform_component.world_transform.scale.x * sprite_component.texture_atlas->GetSpriteRect(frame_name).w / 1.7f;
@@ -125,7 +131,10 @@ void SpawnEnemyShip(const glm::vec2& position, CollectableType collectable)
   shooter_comp.shoot_delay = 2.5f;
   shooter_comp.projectile_damage = 1.f;
   shooter_comp.projectile_speed = 700.f;
-  shooter_comp.projectile_lifetime = 1.2f;
+  shooter_comp.projectile_lifetime = 1.8f;
+
+  auto& thruster_comp = entity.GetOrAddComponent<ThrusterComponent>();
+  thruster_comp.offset = glm::vec2(-45.f, -45.f);
 }
 
 void SpawnEnemyKamikadzeShip(const glm::vec2& position, CollectableType collectable)
@@ -154,6 +163,9 @@ void SpawnEnemyKamikadzeShip(const glm::vec2& position, CollectableType collecta
   enemy_comp.rotation_speed = 800.0;
   enemy_comp.acceleration = glm::vec2(850.f, 850.f);
   enemy_comp.ai_state = AIState::SEEK;
+  enemy_comp.action_length = 5.f;
+  enemy_comp.action_delay = 0.2f;
+  enemy_comp.last_action_time = GameUtils::GetTime();
   enemy_comp.collectable_to_spawn = collectable;
   enemy_comp.level = 0;
 
@@ -167,6 +179,9 @@ void SpawnEnemyKamikadzeShip(const glm::vec2& position, CollectableType collecta
 
   auto& health_comp = entity.GetComponent<HealthComponent>();
   health_comp.health = 2.f;
+
+  auto& thruster_comp = entity.GetOrAddComponent<ThrusterComponent>();
+  thruster_comp.offset = glm::vec2(-45.f, -45.f);
 }
 
 void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
@@ -193,8 +208,11 @@ void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = EnemyType::UFO;
   enemy_comp.rotation_speed = 300.0;
-  enemy_comp.acceleration = glm::vec2(150.f, 150.f);
+  enemy_comp.acceleration = glm::vec2(350.f, 350.f);
   enemy_comp.ai_state = AIState::MOVE;
+  enemy_comp.action_length = 5.f;
+  enemy_comp.action_delay = 0.2f;
+  enemy_comp.last_action_time = GameUtils::GetTime();
   enemy_comp.collectable_to_spawn = collectable;
   enemy_comp.level = 0;
 
@@ -208,6 +226,8 @@ void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
 
   auto& health_comp = entity.GetComponent<HealthComponent>();
   health_comp.health = 5.f;
+
+  entity.RemoveComponent<ThrusterComponent>();
 }
 
 void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collectable)
@@ -217,7 +237,7 @@ void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collect
 
   const float random_angle = GameUtils::Random(0.f, 360.f);
   const glm::vec2& random_direction = GameUtils::AngleToVec2(random_angle);
-  const float random_speed = GameUtils::Random(200.f, 400.f);
+  const float random_speed = GameUtils::Random(100.f, 400.f);
   const float random_rotation_speed = GameUtils::Random(-300.f, 300.f);
 
   std::string frame_name = rand() % 2 ? "meteorGrey" : "meteorBrown";
@@ -275,9 +295,11 @@ void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collect
 
   auto& health_comp = entity.GetComponent<HealthComponent>();
   health_comp.health = 1.f;
+
+  entity.RemoveComponent<ThrusterComponent>();
 }
 
-void SpawnExplosionEffect(Transform transform)
+Entity SpawnExplosionEffect(Transform transform)
 {
   Entity entity = Game::GetPool(EntityPoolType::EFFECTS)->GetEntity();
   entity.GetComponent<TagComponent>().tag = "ExplosionEffect";
@@ -296,9 +318,11 @@ void SpawnExplosionEffect(Transform transform)
   animation_comp.current_frame_id = 0;
   animation_comp.stopped = false;
   animation_comp.started = false;
+
+  return entity;
 }
 
-void SpawnHitEffect(Transform transform, bool is_player)
+Entity SpawnHitEffect(Transform transform, bool is_player)
 {
   Entity entity = Game::GetPool(EntityPoolType::EFFECTS)->GetEntity();
   entity.GetComponent<TagComponent>().tag = "ExplosionEffect";
@@ -326,6 +350,31 @@ void SpawnHitEffect(Transform transform, bool is_player)
   {
     animation_comp.params.frames = { "laserRed08", "laserRed09", "laserRed10", "laserRed11" };
   }
+
+  return entity;
+}
+
+Entity SpawnThrusterEffect(Transform transform)
+{
+  Entity entity = Game::GetPool(EntityPoolType::EFFECTS)->GetEntity();
+  entity.GetComponent<TagComponent>().tag = "ThrusterEffect";
+
+  auto& sprite_comp = entity.GetComponent<SpriteComponent>();
+  sprite_comp.current_frame = "";
+
+  auto& transform_comp = entity.GetComponent<TransformComponent>();
+  transform_comp.world_transform = transform;
+
+  auto& animation_comp = entity.GetComponent<AnimationComponent>();
+  animation_comp.params.animation_rate = 20.f;
+  animation_comp.params.loop = true;
+  animation_comp.params.auto_delete = false;
+  animation_comp.params.frames = { "fire01", "fire02", "fire03", "fire04", "fire05", "fire06", "fire07" };
+  animation_comp.current_frame_id = 0;
+  animation_comp.stopped = false;
+  animation_comp.started = false;
+
+  return entity;
 }
 
 void GameplayStatics::SpawnCollectable(const Transform& transform, CollectableType collectable_type)
@@ -541,23 +590,26 @@ void GameplayStatics::OnPlayerDead(Entity entity)
     game_state_sc.player_death_time = GameUtils::GetTime();
   }
 
+  if (Mix_Playing(THRUSTER_SOUND_CHANNEL))
+  {
+    Mix_HaltChannel(THRUSTER_SOUND_CHANNEL);
+  }
+
   Game::DestroyEntity(entity);
 }
 
-void GameplayStatics::SpawnEffect(const Transform& transform, EffectType effect_type, bool is_player)
+Entity GameplayStatics::SpawnEffect(const Transform& transform, EffectType effect_type, bool is_player)
 {
   switch (effect_type)
   {
   case EffectType::EXPLOSION:
   {
-    SpawnExplosionEffect(transform);
     Game::GetResources().explosion_sound->Play();
-    break;
+
+    return SpawnExplosionEffect(transform);
   }
   case EffectType::PROJECTILE_HIT:
   {
-    SpawnHitEffect(transform, is_player);
-
     if (is_player)
     {
       Game::GetResources().player_hit_sound->Play();
@@ -566,10 +618,17 @@ void GameplayStatics::SpawnEffect(const Transform& transform, EffectType effect_
     {
       Game::GetResources().enemy_hit_sound->Play();
     }
-    break;
+
+    return SpawnHitEffect(transform, is_player);
+  }
+  case EffectType::THRUSTER:
+  {
+    return SpawnThrusterEffect(transform);
   }
   default:
     assert(false);
     break;
   }
+
+  return Entity();
 }
