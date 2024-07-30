@@ -14,6 +14,7 @@ enum class AIState
 struct EnemyComponent
 {
   glm::vec2 acceleration = { 0.f, 0.f };
+  float max_speed = 1000.f;
   float rotation_speed = 0.0f;
   int level = 0;
 

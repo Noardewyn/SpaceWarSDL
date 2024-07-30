@@ -33,6 +33,7 @@
 #include "systems/debug_draw_system.h"
 #include "systems/hud_system.h"
 #include "systems/game_state_system.h"
+#include "systems/thruster_system.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -424,6 +425,7 @@ void Game::Run()
   systems_manager.Register<PhysicsSystem>();
   systems_manager.Register<CollectableSystem>();
   systems_manager.Register<DamageSystem>();
+  systems_manager.Register<ThrusterSystem>();
   systems_manager.Register<DeathSystem>();
   systems_manager.Register<SpriteSystem>();
   systems_manager.Register<DebugDrawSystem>();

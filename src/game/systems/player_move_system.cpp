@@ -11,8 +11,8 @@
 #include "components/game_state_single_component.h"
 #include "components/rigid_body_component.h"
 #include "components/shooter_component.h"
-
-const int THRUSTER_SOUND_CHANNEL = 14;
+#include "components/thruster_component.h"
+#include "components/death_component.h"
 
 void PlayerMoveSystem::Update(float delta_time)
 {
@@ -21,17 +21,24 @@ void PlayerMoveSystem::Update(float delta_time)
 
   view.each([delta_time](Entity entity, PlayerComponent& player_comp, RigidBodyComponent& rigidbody_comp, TransformComponent& transform_comp, ShooterComponent& shooter_comp) {
 
+    bool is_dead = entity.HasComponent<DeadComponent>();
     const tools::InputManager* input_manager = tools::InputManager::Instance();
 
     // Shooting
     shooter_comp.shoot_triggered = input_manager->KeyDown(SDL_SCANCODE_SPACE);
 
     // Forward movement
-    if (input_manager->KeyDown(SDL_SCANCODE_UP) || input_manager->KeyDown(SDL_SCANCODE_W))
+    if (!is_dead && input_manager->KeyDown(SDL_SCANCODE_UP) || input_manager->KeyDown(SDL_SCANCODE_W))
     {
       if (!Mix_Playing(THRUSTER_SOUND_CHANNEL))
       {
         Game::GetResources().thruster_sound->Play(THRUSTER_SOUND_CHANNEL);
+      }
+
+      if (entity.HasComponent<ThrusterComponent>())
+      {
+        auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+        thruster_comp.turn_on = true;
       }
 
       if (glm::length(player_comp.velocity) > player_comp.max_speed)
@@ -44,6 +51,12 @@ void PlayerMoveSystem::Update(float delta_time)
     }
     else
     {
+      if (entity.HasComponent<ThrusterComponent>())
+      {
+        auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+        thruster_comp.turn_on = false;
+      }
+
       if (Mix_Playing(THRUSTER_SOUND_CHANNEL))
       {
         Mix_HaltChannel(THRUSTER_SOUND_CHANNEL);

@@ -10,6 +10,7 @@
 #include "components/rigid_body_component.h"
 #include "components/game_state_single_component.h"
 #include "components/shooter_component.h"
+#include "components/thruster_component.h"
 
 float TargetAngleDiff(const glm::vec2& target_postion, const glm::vec2& our_position, float our_rotation)
 {
@@ -155,9 +156,21 @@ void EnemyMoveSystem::Update(float delta_time)
         {
           ShootTarget(target_angle_diff, entity.GetComponent<ShooterComponent>());
         }
+
+        if (entity.HasComponent<ThrusterComponent>())
+        {
+          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+          thruster_comp.turn_on = true;
+        }
       }
       else
       {
+        if (entity.HasComponent<ThrusterComponent>())
+        {
+          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+          thruster_comp.turn_on = false;
+        }
+
         enemy_comp.next_ai_state = GetRandomAction();
       }
 
@@ -199,9 +212,21 @@ void EnemyMoveSystem::Update(float delta_time)
         float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
 
         MoveToPos(delta_time, enemy_comp.target_positin, 0.f, enemy_comp, rigidbody_comp, transform_comp);
+
+        if (entity.HasComponent<ThrusterComponent>())
+        {
+          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+          thruster_comp.turn_on = true;
+        }
       }
       else
       {
+        if (entity.HasComponent<ThrusterComponent>())
+        {
+          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
+          thruster_comp.turn_on = false;
+        }
+
         enemy_comp.next_ai_state = GetRandomAction();
       }
       break;

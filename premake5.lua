@@ -40,7 +40,7 @@ DependencyDir["stb"] = "vendor/stb"
 
 -- Project
 project "SpaceWarGame"
-	kind "WindowedApp"
+	kind "ConsoleApp" -- ConsoleApp
 	language "C++"
 	cppdialect "C++17"
     targetdir "bin/%{cfg.buildcfg}"
