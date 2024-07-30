@@ -4,13 +4,15 @@
 
 #include <glm.hpp>
 
+const int THRUSTER_SOUND_CHANNEL = 14;
+
 class GameplayStatics
 {
 public:
   static void SpawnSun();
   static void SpawnPlayer();
   static void SpawnEnemy(EnemyType enemy_type, const glm::vec2& postion, CollectableType collectable = CollectableType::NONE);
-  static void SpawnEffect(const Transform& transform, EffectType effect_type, bool is_player = true);
+  static Entity SpawnEffect(const Transform& transform, EffectType effect_type, bool is_player = true);
   static void SpawnCollectable(const Transform& transform, CollectableType collectable_type);
 
   static void ApplyCollectable(CollectableType collectable_type);

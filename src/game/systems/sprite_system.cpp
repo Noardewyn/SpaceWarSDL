@@ -38,7 +38,7 @@ void SpriteSystem::Update(float delta_time)
   auto view_anim = reg.view<AnimationComponent, SpriteComponent, TransformComponent>();
 
   view_anim.each([delta_time](Entity entity, AnimationComponent& anim_comp, SpriteComponent& sprite_comp, TransformComponent& transform_comp) {
-    if (anim_comp.stopped || entity.HasComponent<InactiveComponent>() || anim_comp.params.frames.empty())
+    if (entity.HasComponent<InactiveComponent>() || anim_comp.params.frames.empty())
     {
       return;
     }
@@ -53,14 +53,13 @@ void SpriteSystem::Update(float delta_time)
 
     int next_frame = int((GameUtils::GetTime() - anim_comp.loop_start_time) * anim_comp.params.animation_rate) % (anim_comp.params.frames.size());
 
-    if (next_frame != anim_comp.current_frame_id && next_frame == 0)
+    if (anim_comp.stopped || (next_frame != anim_comp.current_frame_id && next_frame == 0))
     {
       anim_comp.loop_start_time = GameUtils::GetTime();
 
-      if (!anim_comp.params.loop)
+      if (anim_comp.stopped || !anim_comp.params.loop)
       {
         anim_comp.stopped = true;
-        anim_comp.started = false;
         sprite_comp.current_frame = "";
 
         if (anim_comp.params.auto_delete)
