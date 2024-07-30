@@ -22,6 +22,7 @@
 #include "components/pool_property_component.h"
 #include "components/inactive_component.h"
 #include "components/thruster_component.h"
+#include "components/death_component.h"
 
 #include <SDL_pixels.h>
 
@@ -530,7 +531,7 @@ void GameplayStatics::KillAllEnemies()
   {
     if (!entity.HasComponent<InactiveComponent>())
     {
-      OnEnemyDead(entity, false);
+      entity.AddComponent<DeadComponent>(false);
     }
   }
 }
@@ -571,7 +572,7 @@ void GameplayStatics::OnEnemyDead(Entity entity, bool is_crash_damage)
   if (entity.HasComponent<PoolPropertyComponent>())
   {
     EntityPoolType pool_type = entity.GetComponent<PoolPropertyComponent>().pool_type;
-    Game::DestroyEntity(entity);
+    Game::GetPool(pool_type)->FreeEntity(entity);
   }
 }
 
