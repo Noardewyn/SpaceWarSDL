@@ -13,6 +13,7 @@
 #include "components/projectile_component.h"
 #include "components/pool_property_component.h"
 #include "components/death_component.h"
+#include "components/thruster_component.h"
 
 Entity EnemiesPool::OnCreate()
 {
@@ -34,6 +35,7 @@ Entity EnemiesPool::OnCreate()
   entity.AddComponent<DamageDealerComponent>(1.f, entity);
   entity.AddComponent<HealthComponent>(1.f);
   entity.AddComponent<PoolPropertyComponent>(EntityPoolType::ENEMY);
+  entity.AddComponent<ThrusterComponent>(glm::vec2(-45.f, -45.f));
 
   return entity;
 }
@@ -43,6 +45,9 @@ void EnemiesPool::OnReset(Entity entity)
   TransformComponent& transform_component = entity.GetComponent<TransformComponent>();
   transform_component.world_transform.position = pool_objects_position;
 
+  EnemyComponent& enemy_comp = entity.GetComponent<EnemyComponent>();
+  enemy_comp.last_state_change_time = 0.f;
+
   if (entity.HasComponent<ShooterComponent>())
   {
     entity.RemoveComponent<ShooterComponent>();
@@ -50,6 +55,10 @@ void EnemiesPool::OnReset(Entity entity)
   if (entity.HasComponent<DeadComponent>())
   {
     entity.RemoveComponent<DeadComponent>();
+  }
+  if (entity.HasComponent<ThrusterComponent>())
+  {
+    entity.RemoveComponent<ThrusterComponent>();
   }
 }
 
