@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <SDL.h>
 
 class TextureAtlas
@@ -11,5 +11,5 @@ public:
   SDL_Rect GetSpriteRect(const std::string& name);
 
 private:
-  std::map<std::string, SDL_Rect> frames;
+  std::unordered_map<std::string, SDL_Rect> frames;
 };

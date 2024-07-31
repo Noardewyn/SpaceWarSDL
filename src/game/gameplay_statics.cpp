@@ -531,7 +531,7 @@ void GameplayStatics::KillAllEnemies()
   {
     if (!entity.HasComponent<InactiveComponent>())
     {
-      entity.AddComponent<DeadComponent>(false);
+      entity.AddComponent<DeadComponent>(true);
     }
   }
 }

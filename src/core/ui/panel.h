@@ -4,7 +4,7 @@
 #include "ui_element.h"
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 namespace ui
 {
@@ -26,6 +26,6 @@ public:
   void Render();
 
 private:
-  std::map<std::string, std::shared_ptr<UIElement>> ui_elements;
+  std::unordered_map<std::string, std::shared_ptr<UIElement>> ui_elements;
 };
 }
