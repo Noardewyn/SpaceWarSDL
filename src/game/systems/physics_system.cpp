@@ -11,8 +11,8 @@
 
 #include <unordered_map>
 
-const float GRAVITY_CONST = 30000.f;
-const float MAX_GRAVITY_FORCE = 400.f;
+const float GRAVITY_CONST = 25000.f;
+const float MAX_GRAVITY_FORCE = 350.f;
 
 void PhysicsSystem::Update(float delta_time)
 {
