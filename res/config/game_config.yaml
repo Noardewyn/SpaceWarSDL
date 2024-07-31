@@ -122,7 +122,7 @@ waves:
       max_count: 1
     - enemy_type: "SHOOTER"
       min_count: 0
-      max_count: 3
+      max_count: 2
       collectables:
         - type: "EXTRA_SHOT"
           chance: 0.02
@@ -146,429 +146,415 @@ waves:
           chance: 0.3
   - packs:
     - enemy_type: "KAMIKADZE"
-      min_count: 5
+      min_count: 3
+      max_count: 3
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 1.0
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "ASTEROID_BIG"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 3
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 1
+      max_count: 1
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 1
+      max_count: 1
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 4
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 3
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 4
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 1
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_BIG"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+    - enemy_type: "UFO"
+      min_count: 1
+      max_count: 1
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+    - enemy_type: "SHOOTER"
+      min_count: 0
+      max_count: 4
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+    - enemy_type: "KAMIKADZE"
+      min_count: 0
+      max_count: 4
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+  - packs:
+    - enemy_type: "ASTEROID_MED"
+      min_count: 0
+      max_count: 3
+      collectables:
+        - type: "EXTRA_SHOT"
+          chance: 0.2
+        - type: "EXTRA_LIFE"
+          chance: 0.3
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "MASS_DEATH"
+          chance: 0.05
+    - enemy_type: "UFO"
+      min_count: 0
+      max_count: 2
+      collectables:
+        - type: "EXTRA_LIFE"
+          chance: 0.5
+        - type: "RAPID_FIRE"
+          chance: 0.1
+        - type: "EXTRA_SHOT"
+          chance: 0.02
+        - type: "MASS_DEATH"
+          chance: 0.05
+    - enemy_type: "SHOOTER"
+      min_count: 2
       max_count: 5
       collectables:
         - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
           chance: 0.1
         - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
+          chance: 0.5
         - type: "RAPID_FIRE"
           chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "ASTEROID_BIG"
-      min_count: 0
-      max_count: 1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
         - type: "MASS_DEATH"
           chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 3
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 1
-      max_count: 1
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 1
-      max_count: 1
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 1
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 4
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 4
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 0
-      max_count: 4
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 3
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "ASTEROID_BIG"
-      min_count: 0
-      max_count: 2
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-    - enemy_type: "UFO"
-      min_count: 2
-      max_count: 3
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 2
-      max_count: 4
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "MASS_DEATH"
-          chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
     - enemy_type: "KAMIKADZE"
       min_count: 0
       max_count: 4
       collectables:
         - type: "EXTRA_SHOT"
-          chance: 0.02
+          chance: 0.1
+        - type: "EXTRA_LIFE"
+          chance: 0.5
+        - type: "RAPID_FIRE"
+          chance: 0.1
         - type: "MASS_DEATH"
           chance: 0.05
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-  - packs:
-    - enemy_type: "ASTEROID_MED"
-      min_count: 0
-      max_count: 3
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "ASTEROID_BIG"
-      min_count: 3
-      max_count: 10
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "UFO"
-      min_count: 5
-      max_count: 10
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-    - enemy_type: "SHOOTER"
-      min_count: 5
-      max_count: 10
-      collectables:
-        - type: "EXTRA_SHOT"
-          chance: 0.02
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "RAPID_FIRE"
-          chance: 0.1
-    - enemy_type: "KAMIKADZE"
-      min_count: 5
-      max_count: 10
-      collectables:
-        - type: "EXTRA_LIFE"
-          chance: 0.3
-        - type: "RAPID_FIRE"
-          chance: 0.1
-        - type: "EXTRA_SHOT"
-          chance: 0.02
