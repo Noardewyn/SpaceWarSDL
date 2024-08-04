@@ -106,12 +106,12 @@ void PhysicsSystem::Update(float delta_time)
       transform_comp.world_transform.position = GameUtils::WrapCoordinates(transform_comp.world_transform.position, glm::vec2(Game::GetWindow().GetWidth(), Game::GetWindow().GetHeight()));
     }
 
+    rigid_body_comp.radial_velocity *= rigid_body_comp.radial_deceleration_coef;
+
     if (abs(rigid_body_comp.radial_velocity) > rigid_body_comp.max_radial_speed)
     {
       rigid_body_comp.radial_velocity = glm::sign(rigid_body_comp.radial_velocity) * rigid_body_comp.max_radial_speed;
     }
-
-    rigid_body_comp.radial_velocity *= rigid_body_comp.radial_deceleration_coef;
 
     float new_rotation = transform_comp.world_transform.GetRotation() + rigid_body_comp.radial_velocity * delta_time;
     transform_comp.world_transform.SetRotation(new_rotation);

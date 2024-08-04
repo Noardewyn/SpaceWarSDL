@@ -26,5 +26,5 @@ Entity CollectablesPool::OnCreate()
 void CollectablesPool::OnReset(Entity entity)
 {
   auto& transform_component = entity.GetComponent<TransformComponent>();
-  transform_component.world_transform.position = pool_objects_position;
+  transform_component.world_transform.position = POOL_OBJECTS_POSITION;
 }
