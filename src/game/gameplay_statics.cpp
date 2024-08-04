@@ -23,6 +23,8 @@
 #include "components/inactive_component.h"
 #include "components/thruster_component.h"
 #include "components/death_component.h"
+#include "components/movement_component.h"
+#include "components/input_component.h"
 
 #include <SDL_pixels.h>
 
@@ -58,8 +60,11 @@ void GameplayStatics::SpawnPlayer()
   player_transform.SetRotation(135.f);
 
   entity.AddComponent<TransformComponent>(player_transform);
-  entity.AddComponent<PlayerComponent>(glm::vec2(450.f, 450.f), 1000.f, 55.f);
+  entity.AddComponent<PlayerComponent>();
   entity.AddComponent<ShooterComponent>(0.5f, 1.f, 1300.f, 1.2f);
+  entity.AddComponent<InputComponent>();
+  entity.AddComponent<MovementComponent>(glm::vec2(450.f, 450.f), 1000.f, 55.f);
+
   auto& rigidbody_comp = entity.AddComponent<RigidBodyComponent>(50.f);
   rigidbody_comp.ignore_list = { "Projectile", "EnemyShip", "EnemyAsteroid" };
   rigidbody_comp.max_radial_speed = 2000.f;
@@ -107,8 +112,11 @@ void SpawnEnemyShip(const glm::vec2& position, CollectableType collectable)
 
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = EnemyType::SHOOTER;
-  enemy_comp.rotation_speed = 200.0;
-  enemy_comp.acceleration = glm::vec2(400.f, 400.f);
+
+  auto& movement_comp = entity.GetComponent<MovementComponent>();
+  movement_comp.max_speed = 700.f;
+  movement_comp.rotation_speed = 30.0;
+  movement_comp.acceleration = glm::vec2(400.f, 400.f);
 
   enemy_comp.ai_state = AIState::SEEK;
   enemy_comp.collectable_to_spawn = collectable;
@@ -161,14 +169,17 @@ void SpawnEnemyKamikadzeShip(const glm::vec2& position, CollectableType collecta
 
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = EnemyType::KAMIKADZE;
-  enemy_comp.rotation_speed = 800.0;
-  enemy_comp.acceleration = glm::vec2(850.f, 850.f);
   enemy_comp.ai_state = AIState::SEEK;
   enemy_comp.action_length = 5.f;
   enemy_comp.action_delay = 0.2f;
   enemy_comp.last_action_time = GameUtils::GetTime();
   enemy_comp.collectable_to_spawn = collectable;
   enemy_comp.level = 0;
+
+  auto& movement_comp = entity.GetComponent<MovementComponent>();
+  movement_comp.max_speed = 400.f;
+  movement_comp.rotation_speed = 30.f;
+  movement_comp.acceleration = glm::vec2(450.f, 450.f);
 
   float texture_width = transform_component.world_transform.scale.x * sprite_component.texture_atlas->GetSpriteRect(frame_name).w / 2.0f;
   auto& collision_comp = entity.GetComponent<CircleCollisionShapeComponent>();
@@ -208,14 +219,17 @@ void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
 
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = EnemyType::UFO;
-  enemy_comp.rotation_speed = 300.0;
-  enemy_comp.acceleration = glm::vec2(350.f, 350.f);
   enemy_comp.ai_state = AIState::MOVE;
   enemy_comp.action_length = 5.f;
   enemy_comp.action_delay = 0.2f;
   enemy_comp.last_action_time = GameUtils::GetTime();
   enemy_comp.collectable_to_spawn = collectable;
   enemy_comp.level = 0;
+
+  auto& movement_comp = entity.GetComponent<MovementComponent>();
+  movement_comp.max_speed = 600.f;
+  movement_comp.rotation_speed = 10.0;
+  movement_comp.acceleration = glm::vec2(350.f, 350.f);
 
   float texture_width = transform_component.world_transform.scale.x * sprite_component.texture_atlas->GetSpriteRect(frame_name).w / 2.0f;
   auto& collision_comp = entity.GetComponent<CircleCollisionShapeComponent>();
@@ -281,8 +295,6 @@ void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collect
 
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
   enemy_comp.enemy_type = enemy_type;
-  enemy_comp.rotation_speed = 300.0;
-  enemy_comp.acceleration = glm::vec2(150.f, 150.f);
   enemy_comp.collectable_to_spawn = collectable;
   enemy_comp.level = level;
 
@@ -455,6 +467,44 @@ void GameplayStatics::SpawnEnemy(EnemyType enemy_type, const glm::vec2& position
   game_state_sc.enemies_left++;
 }
 
+void GameplayStatics::SpawnProjectile(ProjectileSpawnParams& params, float shoot_offset)
+{
+  Entity projectile = Game::GetPool(EntityPoolType::PROJECTILE)->GetEntity();
+
+  auto& sprite_comp = projectile.GetComponent<SpriteComponent>();
+  sprite_comp.current_frame = "";
+
+  auto& anim_comp = projectile.GetComponent<AnimationComponent>();
+  anim_comp.params.animation_rate = 15.f;
+  anim_comp.params.loop = true;
+  anim_comp.stopped = false;
+  anim_comp.started = false;
+
+  if (params.owner.HasComponent<PlayerComponent>())
+  {
+    anim_comp.params.frames = { "laserBlue01", "laserBlue03", "laserBlue05", "laserBlue06", "laserBlue07" };
+  }
+  else
+  {
+    anim_comp.params.frames = { "laserRed01", "laserRed03", "laserRed05", "laserRed06", "laserRed07" };
+  }
+
+  auto& projectile_transform_comp = projectile.GetComponent<TransformComponent>();
+  projectile_transform_comp.world_transform.SetRotation(params.transform.GetRotation());
+
+  const glm::vec2& shoot_offset_vec = GameUtils::AngleToVec2(GameUtils::WrapAngle(params.transform.GetRotation() + shoot_offset));
+  projectile_transform_comp.world_transform.position = params.transform.position + shoot_offset_vec * 70.f;
+
+  auto& projectile_component = projectile.GetComponent<ProjectileComponent>();
+  projectile_component.spawn_time = GameUtils::GetTime();
+  projectile_component.lifetime = params.lifetime;
+  projectile_component.velocity = params.transform.GetForwardVector() * params.speed;
+
+  auto& damage_dealer_component = projectile.GetComponent<DamageDealerComponent>();
+  damage_dealer_component.damage = params.damage;
+  damage_dealer_component.owner = params.owner;
+}
+
 void GameplayStatics::ApplyCollectable(CollectableType collectable_type)
 {
   Entity player_entity;
@@ -545,13 +595,17 @@ void GameplayStatics::OnEnemyDead(Entity entity, bool is_crash_damage)
 
   auto& enemy_comp = entity.GetComponent<EnemyComponent>();
 
-  if (Game::GetRootEntity().HasComponent<HUDSingleComponent>())
+  if (Game::GetRootEntity().HasComponent<GameStateSingleComponent>())
   {
-    float score = Game::GetResources().game_config_asset->score_mapping[size_t(enemy_comp.enemy_type)];
-    Game::GetRootEntity().GetComponent<HUDSingleComponent>().score += int(score);
-  }
+    auto& game_state_sc = Game::GetRootEntity().GetComponent<GameStateSingleComponent>();
+    game_state_sc.enemies_left--;
 
-  Game::GetRootEntity().GetComponent<GameStateSingleComponent>().enemies_left--;
+    if (Game::GetRootEntity().HasComponent<HUDSingleComponent>() && !game_state_sc.player_death)
+    {
+      float score = Game::GetResources().game_config_asset->score_mapping[size_t(enemy_comp.enemy_type)];
+      Game::GetRootEntity().GetComponent<HUDSingleComponent>().score += static_cast<int>(score);
+    }
+  }
 
   if (!is_crash_damage)
   {

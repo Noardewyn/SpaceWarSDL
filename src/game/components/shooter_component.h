@@ -9,7 +9,6 @@ struct ShooterComponent
   int shots_count = 1;
 
   // Runtime
-  bool shoot_triggered = false;
   float last_shoot_time = 0.0f;
 
   ShooterComponent() = default;

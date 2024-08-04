@@ -14,6 +14,7 @@ struct AnimationComponent
 
   AnimationParams params;
 
+  // Runtime
   int current_frame_id = 0;
   float loop_start_time = 0.0f;
   bool stopped = false;
