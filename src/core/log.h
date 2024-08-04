@@ -13,11 +13,12 @@ public:
   static void Init(spdlog::level::level_enum log_level, const std::string& pattern = default_log_pattern);
   static std::shared_ptr<spdlog::logger> get_logger()
   {
-    return _logger;
+    return logger;
   };
 
 private:
-  static std::shared_ptr<spdlog::logger> _logger;
+  static std::shared_ptr<spdlog::logger> logger;
+  static std::vector<spdlog::sink_ptr> sinks;
 };
 } // namespace tools
 
