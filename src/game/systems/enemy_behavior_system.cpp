@@ -11,6 +11,8 @@
 #include "components/game_state_single_component.h"
 #include "components/shooter_component.h"
 #include "components/thruster_component.h"
+#include "components/input_component.h"
+#include "components/movement_component.h"
 
 float TargetAngleDiff(const glm::vec2& target_postion, const glm::vec2& our_position, float our_rotation)
 {
@@ -41,47 +43,42 @@ bool UpdateActionPossible(EnemyComponent& enemy_comp)
   return false;
 }
 
-void RotateToTarget(float target_rotation, float rotation_speed, RigidBodyComponent& rigidbody_comp)
+void RotateToTarget(float target_rotation, InputComponent& input_comp)
 {
   if (target_rotation < -5.f)
   {
-    rigidbody_comp.radial_velocity -= rotation_speed;
+    input_comp.steereng = -1.f;
   }
   else if (target_rotation > 5.f)
   {
-    rigidbody_comp.radial_velocity += rotation_speed;
+    input_comp.steereng = 1.f;
   }
 }
 
-void ShootTarget(float target_angle_diff, ShooterComponent& shooter_comp)
+void ShootTarget(float target_angle_diff, InputComponent& input_comp)
 {
-  if (glm::abs(target_angle_diff) < 20.f)
-  {
-    shooter_comp.shoot_triggered = true;
-  }
-  else
-  {
-    shooter_comp.shoot_triggered = false;
-  }
+  input_comp.shoot_triggered = glm::abs(target_angle_diff) < 20.f;
 }
 
-void MoveToPos(float delta_time,
+void MoveToPos(const Transform& transform,
   const glm::vec2& target_postion,
   float keep_distance,
-  EnemyComponent& enemy_comp,
-  RigidBodyComponent& rigidbody_comp,
-  TransformComponent& transform_comp)
+  InputComponent& input_comp)
 {
-  const glm::vec2 dir_to_target = target_postion - transform_comp.world_transform.position;
-  float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
+  const glm::vec2 dir_to_target = target_postion - transform.position;
+  float target_angle_diff = TargetAngleDiff(target_postion, transform.position, transform.GetRotation());
 
   if (glm::length(dir_to_target) > keep_distance && abs(target_angle_diff) < 25.f)
   {
-    rigidbody_comp.velocity += transform_comp.world_transform.GetForwardVector() * enemy_comp.acceleration * delta_time;
+    input_comp.move_direction.y = 1.f;
+  }
+  else
+  {
+    input_comp.move_direction.y = 0.f;
   }
 
   // Turn to enemy 
-  RotateToTarget(target_angle_diff, enemy_comp.rotation_speed, rigidbody_comp);
+  RotateToTarget(target_angle_diff, input_comp);
 }
 
 AIState GetRandomAction()
@@ -99,12 +96,11 @@ AIState GetRandomAction()
 void EnemyMoveSystem::Update(float delta_time)
 {
   entt::registry& reg = Game::GetRegistry();
+  auto view = reg.view<EnemyComponent, InputComponent, TransformComponent>();
 
-  auto view = reg.view<EnemyComponent, RigidBodyComponent, TransformComponent>();
+  view.each([delta_time](Entity entity, EnemyComponent& enemy_comp, InputComponent& input_comp, TransformComponent& transform_comp) {
 
-  view.each([delta_time](Entity entity, EnemyComponent& enemy_comp, RigidBodyComponent& rigidbody_comp, TransformComponent& transform_comp) {
-
-    if (GameUtils::GetTime() - enemy_comp.last_reaction_time < enemy_comp.reaction_delay)
+    if (GameUtils::GetTime() - enemy_comp.last_reaction_time < enemy_comp.tick_rate)
     {
       return;
     }
@@ -113,11 +109,15 @@ void EnemyMoveSystem::Update(float delta_time)
       enemy_comp.enemy_type == EnemyType::ASTEROID_MED ||
       enemy_comp.enemy_type == EnemyType::ASTEROID_SMALL)
     {
-      transform_comp.world_transform.SetRotation(transform_comp.world_transform.GetRotation() + enemy_comp.rotation_speed * delta_time);
       return;
     }
 
-    bool action_possible = UpdateActionPossible(enemy_comp);
+    auto& game_state_sc = Game::GetRootEntity().GetComponent<GameStateSingleComponent>();
+    const bool is_player_dead = game_state_sc.player_death;
+    const bool action_possible = UpdateActionPossible(enemy_comp);
+    input_comp.move_direction = glm::vec2(0.f, 0.f);
+    input_comp.shoot_triggered = false;
+    input_comp.steereng = 0.f;
 
     switch (enemy_comp.ai_state)
     {
@@ -126,8 +126,8 @@ void EnemyMoveSystem::Update(float delta_time)
       // Don't move, stay still, rotate sometimes
       if (action_possible)
       {
-        float target_angle_diff = GameUtils::AnglesDiff(enemy_comp.target_angle, transform_comp.world_transform.GetRotation());
-        RotateToTarget(target_angle_diff, enemy_comp.rotation_speed, rigidbody_comp);
+        const float target_angle_diff = GameUtils::AnglesDiff(enemy_comp.target_angle, transform_comp.world_transform.GetRotation());
+        RotateToTarget(target_angle_diff, input_comp);
       }
       else
       {
@@ -139,38 +139,20 @@ void EnemyMoveSystem::Update(float delta_time)
     }
     case AIState::SEEK:
     {
-      // Get player pos
-      Entity root_entity = Game::GetRootEntity();
-      auto& game_state_sc = root_entity.GetComponent<GameStateSingleComponent>();
-      enemy_comp.target_positin = game_state_sc.player_pos;
-
       if (action_possible)
       {
+        enemy_comp.target_positin = game_state_sc.player_pos;
+
         // Seek player, shoot him
-        float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
-        float keep_distance = enemy_comp.enemy_type == EnemyType::KAMIKADZE ? 0.f : 100.f;
+        const float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
+        const float keep_distance = enemy_comp.enemy_type == EnemyType::KAMIKADZE ? 0.f : 100.f;
 
-        MoveToPos(delta_time, enemy_comp.target_positin, keep_distance, enemy_comp, rigidbody_comp, transform_comp);
+        MoveToPos(transform_comp.world_transform, enemy_comp.target_positin, keep_distance, input_comp);
 
-        if (entity.HasComponent<ShooterComponent>())
-        {
-          ShootTarget(target_angle_diff, entity.GetComponent<ShooterComponent>());
-        }
-
-        if (entity.HasComponent<ThrusterComponent>())
-        {
-          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
-          thruster_comp.turn_on = true;
-        }
+        ShootTarget(target_angle_diff, input_comp);
       }
       else
       {
-        if (entity.HasComponent<ThrusterComponent>())
-        {
-          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
-          thruster_comp.turn_on = false;
-        }
-
         enemy_comp.next_ai_state = GetRandomAction();
       }
 
@@ -178,23 +160,17 @@ void EnemyMoveSystem::Update(float delta_time)
     }
     case AIState::SHOOT:
     {
-      // Get player pos
-      Entity root_entity = Game::GetRootEntity();
-      auto& game_state_sc = root_entity.GetComponent<GameStateSingleComponent>();
-      enemy_comp.target_positin = game_state_sc.player_pos;
-
       if (action_possible)
       {
-        // Seek player, shoot him
-        float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
+        enemy_comp.target_positin = game_state_sc.player_pos;
 
-        RotateToTarget(target_angle_diff, enemy_comp.rotation_speed, rigidbody_comp);
+        // Seek player, shoot him
+        const float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
+
+        RotateToTarget(target_angle_diff, input_comp);
 
         // Shoot without moving
-        if (entity.HasComponent<ShooterComponent>())
-        {
-          ShootTarget(target_angle_diff, entity.GetComponent<ShooterComponent>());
-        }
+        ShootTarget(target_angle_diff, input_comp);
       }
       else
       {
@@ -209,24 +185,12 @@ void EnemyMoveSystem::Update(float delta_time)
       if (action_possible)
       {
         // Seek player, shoot him
-        float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
+        const float target_angle_diff = TargetAngleDiff(enemy_comp.target_positin, transform_comp.world_transform.position, transform_comp.world_transform.GetRotation());
 
-        MoveToPos(delta_time, enemy_comp.target_positin, 0.f, enemy_comp, rigidbody_comp, transform_comp);
-
-        if (entity.HasComponent<ThrusterComponent>())
-        {
-          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
-          thruster_comp.turn_on = true;
-        }
+        MoveToPos(transform_comp.world_transform, enemy_comp.target_positin, 0.f, input_comp);
       }
       else
       {
-        if (entity.HasComponent<ThrusterComponent>())
-        {
-          auto& thruster_comp = entity.GetComponent<ThrusterComponent>();
-          thruster_comp.turn_on = false;
-        }
-
         enemy_comp.next_ai_state = GetRandomAction();
       }
       break;
@@ -254,12 +218,11 @@ void EnemyMoveSystem::Update(float delta_time)
         break;
       }
 
-      if (entity.HasComponent<ShooterComponent>())
+      if (is_player_dead)
       {
-        entity.GetComponent<ShooterComponent>().shoot_triggered = false;
+        enemy_comp.ai_state = AIState::MOVE;
       }
-
-      if (enemy_comp.enemy_type == EnemyType::UFO)
+      else if (enemy_comp.enemy_type == EnemyType::UFO)
       {
         enemy_comp.ai_state = AIState::MOVE;
       }

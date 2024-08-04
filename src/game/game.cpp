@@ -22,7 +22,7 @@
 #include "components/game_state_single_component.h"
 #include "systems/shoot_system.h"
 #include "systems/collision_system.h"
-#include "systems/player_move_system.h"
+#include "systems/move_system.h"
 #include "systems/enemy_behavior_system.h"
 #include "systems/projectile_system.h"
 #include "systems/physics_system.h"
@@ -34,6 +34,7 @@
 #include "systems/hud_system.h"
 #include "systems/game_state_system.h"
 #include "systems/thruster_system.h"
+#include "systems/player_input_system.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
@@ -418,7 +419,8 @@ void Game::Run()
 
   // Register ecs systems
   systems_manager.Register<CollisionSystem>();
-  systems_manager.Register<PlayerMoveSystem>();
+  systems_manager.Register<PlayerInputSystem>();
+  systems_manager.Register<MoveSystem>();
   systems_manager.Register<EnemyMoveSystem>();
   systems_manager.Register<ShootSystem>();
   systems_manager.Register<ProjectileSystem>();

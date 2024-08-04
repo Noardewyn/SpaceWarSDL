@@ -26,7 +26,7 @@ Entity EffectsPool::OnCreate()
 void EffectsPool::OnReset(Entity entity)
 {
   auto& transform_component = entity.GetComponent<TransformComponent>();
-  transform_component.world_transform.position = pool_objects_position;
+  transform_component.world_transform.position = POOL_OBJECTS_POSITION;
 
   auto& animation_component = entity.GetComponent<AnimationComponent>();
   animation_component.current_frame_id = 0;

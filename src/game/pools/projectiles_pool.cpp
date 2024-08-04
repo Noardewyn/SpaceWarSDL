@@ -15,7 +15,7 @@ Entity ProjectilesPool::OnCreate()
   Entity entity = Game::CreateEntity("Projectile");
 
   SpriteComponent& sprite_component = entity.AddComponent<SpriteComponent>(Game::GetResources().gameplay_texture_asset, Game::GetResources().gameplay_atlas_asset);
-  entity.AddComponent<TransformComponent>(Transform(pool_objects_position.x, pool_objects_position.y));
+  entity.AddComponent<TransformComponent>(Transform(POOL_OBJECTS_POSITION.x, POOL_OBJECTS_POSITION.y));
   entity.AddComponent<ProjectileComponent>(glm::vec2(0.0f, 0.0f), 1.f);
   entity.AddComponent<AnimationComponent>();
   entity.AddComponent<DamageDealerComponent>(1.f, entity, true);
@@ -29,7 +29,7 @@ Entity ProjectilesPool::OnCreate()
 void ProjectilesPool::OnReset(Entity entity)
 {
   TransformComponent& transform_component = entity.GetComponent<TransformComponent>();
-  transform_component.world_transform.position = pool_objects_position;
+  transform_component.world_transform.position = POOL_OBJECTS_POSITION;
 
   ProjectileComponent& projectile_component = entity.GetComponent<ProjectileComponent>();
   projectile_component.velocity = glm::vec2(0.f, 0.f);

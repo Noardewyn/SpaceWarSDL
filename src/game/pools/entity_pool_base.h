@@ -3,7 +3,7 @@
 
 #include <list>
 
-const glm::vec2 pool_objects_position(999999.f, 999999.f);
+const glm::vec2 POOL_OBJECTS_POSITION(999999.f, 999999.f);
 
 class EntityPoolBase
 {
