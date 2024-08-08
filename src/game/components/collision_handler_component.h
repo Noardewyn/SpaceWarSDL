@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <vector>
+#include <unordered_set>
 
 enum CollisionMask
 {
@@ -18,7 +18,7 @@ struct CollisionHandlerComponent
   CollisionMask collision_mask = CollisionMask::ALL;
 
   // Runtime
-  std::vector<Entity> collided_entities;
+  std::unordered_set<entt::entity> collided_entities;
 
   CollisionHandlerComponent(CollisionMask category, CollisionMask collision_mask)
     : category(category),

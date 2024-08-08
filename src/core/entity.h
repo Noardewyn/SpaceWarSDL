@@ -52,6 +52,13 @@ public:
   }
 
   template<typename T>
+  const T& GetComponent() const
+  {
+    assert(HasComponent<T>());
+    return Game::GetRegistry().get<T>(internal_handle);
+  }
+
+  template<typename T>
   T& GetComponent()
   {
     assert(HasComponent<T>());
@@ -59,7 +66,7 @@ public:
   }
 
   template<typename T>
-  bool HasComponent()
+  bool HasComponent() const
   {
     return Game::GetRegistry().any_of<T>(internal_handle);
   }
@@ -71,7 +78,7 @@ public:
     Game::GetRegistry().remove<T>(internal_handle);
   }
 
-  const std::string& GetName()
+  const std::string& GetName() const
   {
     return GetComponent<TagComponent>().tag;
   }
