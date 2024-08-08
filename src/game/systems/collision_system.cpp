@@ -18,42 +18,46 @@ void CollisionSystem::Update(float delta_time)
 
   auto view = reg.view<CircleCollisionShapeComponent, CollisionHandlerComponent, TransformComponent>();
 
+  std::vector<std::tuple<Entity, CollisionHandlerComponent*, glm::vec2, float>> collision_bodies;
+
   // Better use quadtree
-  view.each([&view](Entity entity,
+  view.each([&collision_bodies](Entity entity,
     CircleCollisionShapeComponent& collision_comp,
     CollisionHandlerComponent& handler_comp,
     TransformComponent& transform_comp) {
-
-    handler_comp.collided_entities.clear();
 
     if (entity.HasComponent<InactiveComponent>())
     {
       return;
     }
 
-    const glm::vec2& current_position = transform_comp.world_transform.position;
-    const float current_radius = collision_comp.radius;
+    handler_comp.collided_entities.clear();
 
-    view.each([&entity, &handler_comp, &current_position, current_radius](Entity other_entity,
-      CircleCollisionShapeComponent& other_collision_comp,
-      CollisionHandlerComponent& other_handler_comp,
-      TransformComponent& other_transform_comp) {
-
-      if (entity == other_entity ||
-        !(handler_comp.collision_mask & other_handler_comp.category) ||
-        other_entity.HasComponent<InactiveComponent>())
-      {
-        return;
-      }
-
-      const glm::vec2& other_position = other_transform_comp.world_transform.position;
-      const float other_radius = other_collision_comp.radius;
-      bool res = IsPointInsideCircle(current_position, other_position, current_radius, other_radius);
-
-      if (res)
-      {
-        handler_comp.collided_entities.push_back(other_entity);
-      }
-    });
+    collision_bodies.emplace_back(entity, &handler_comp, transform_comp.world_transform.position, collision_comp.radius);
   });
+
+  for (size_t i = 0; i < collision_bodies.size(); i++)
+  {
+    const auto& [first_entity, first_handler, first_pos, first_radius] = collision_bodies[i];
+
+    for (size_t j = i + 1; j < collision_bodies.size(); j++)
+    {
+      const auto& [second_entity, second_handler, second_pos, second_radius] = collision_bodies[j];
+
+      if (!(first_handler->collision_mask & second_handler->category))
+      {
+        continue;
+      }
+
+      if (IsPointInsideCircle(first_pos, second_pos, first_radius, second_radius))
+      {
+        first_handler->collided_entities.insert(second_entity);
+
+        if (second_handler->collision_mask & first_handler->category)
+        {
+          second_handler->collided_entities.insert(first_entity);
+        }
+      }
+    }
+  }
 }
