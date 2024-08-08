@@ -2,6 +2,8 @@
 
 #include "core/transform.h"
 
+#include <unordered_set>
+
 struct RigidBodyComponent
 {
   float mass = 10.f;
@@ -15,7 +17,7 @@ struct RigidBodyComponent
 
   float max_gravity_force = 3.f;
 
-  std::vector<std::string> ignore_list;
+  std::unordered_set<std::string> ignore_list;
 
   RigidBodyComponent(float mass, bool lock_position = false, const glm::vec2& velocity = { 0.f, 0.f })
     : mass(mass),
