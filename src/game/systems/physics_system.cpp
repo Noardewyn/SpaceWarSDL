@@ -11,7 +11,7 @@
 
 #include <unordered_map>
 
-const float GRAVITY_CONST = 25000.f;
+const float GRAVITY_CONST = 5000.f;
 const float MAX_GRAVITY_FORCE = 350.f;
 
 void PhysicsSystem::Update(float delta_time)
@@ -19,10 +19,10 @@ void PhysicsSystem::Update(float delta_time)
   entt::registry& reg = Game::GetRegistry();
   auto view = reg.view<RigidBodyComponent, TransformComponent>();
 
-  std::unordered_map<entt::entity, std::pair<float, glm::vec2>> centers_of_mass;
+  std::vector<std::tuple<Entity, RigidBodyComponent*, float, glm::vec2>> bodies;
 
   // Get all rigidbodies
-  view.each([delta_time, &centers_of_mass](Entity entity, RigidBodyComponent& rigid_body_comp, TransformComponent& transform_comp) {
+  view.each([delta_time, &bodies](Entity entity, RigidBodyComponent& rigid_body_comp, TransformComponent& transform_comp) {
     if (entity.HasComponent<InactiveComponent>() || !Game::HasEntity(entity))
     {
       return;
@@ -30,66 +30,47 @@ void PhysicsSystem::Update(float delta_time)
 
     if (rigid_body_comp.mass != 0.f)
     {
-      centers_of_mass[entity] = { rigid_body_comp.mass, transform_comp.world_transform.position };
+      bodies.emplace_back(entity, &rigid_body_comp, rigid_body_comp.mass, transform_comp.world_transform.position);
     }
   });
 
   // Update physic velocity
-  view.each([delta_time, &centers_of_mass](Entity entity, RigidBodyComponent& rigid_body_comp, TransformComponent& transform_comp) {
-    if (entity.HasComponent<InactiveComponent>() || !Game::HasEntity(entity))
+  for (size_t i = 0; i < bodies.size(); i++)
+  {
+    const auto& [first_entity, first_body, first_mass, first_pos] = bodies[i];
+
+    for (size_t j = i + 1; j < bodies.size(); j++)
     {
-      return;
-    }
+      const auto& [second_entity, second_body, second_mass, second_pos] = bodies[j];
 
-    for (const auto mass_center : centers_of_mass)
-    {
-      if (Entity(mass_center.first).HasComponent<InactiveComponent>() || entity == Entity(mass_center.first))
+      const glm::vec2& gravitation_dir = second_pos - first_pos;
+
+      if (length(gravitation_dir) == 0.f)
       {
         continue;
       }
 
-      bool ignore = false;
-      for (auto ignored_entity : rigid_body_comp.ignore_list)
+      const float distance_to_body = std::max(1.f, glm::length(gravitation_dir));
+      const float gravity_force = GRAVITY_CONST * (first_body->mass * second_body->mass) / static_cast<float>(glm::pow(distance_to_body, 2.f));
+      const glm::vec2& force_to_apply = glm::normalize(gravitation_dir) * std::min(gravity_force, MAX_GRAVITY_FORCE);
+
+      // Push outside on small distances to prevent stucking inside gravity centers
+      const glm::vec2& velocity_delta = force_to_apply * delta_time * (distance_to_body < 50.f ? -2.f : 1.f);
+
+      if (!first_body->lock_position && second_body->ignore_list.find(first_entity.GetName()) == second_body->ignore_list.end())
       {
-        if (Entity(mass_center.first).GetName() == ignored_entity)
-        {
-          ignore = true;
-        }
+        first_body->velocity += velocity_delta;
       }
 
-      if (ignore)
+      if (!second_body->lock_position && first_body->ignore_list.find(second_entity.GetName()) == first_body->ignore_list.end())
       {
-        continue;
-      }
-
-      glm::vec2 direction = mass_center.second.second - transform_comp.world_transform.position;
-
-      if (glm::length(direction) == 0.f)
-      {
-        continue;
-      }
-
-      const glm::vec2& direction_normalized = glm::normalize(direction);
-      const float distance = std::max(1.0f, glm::length(direction));
-      const float gravity_force = GRAVITY_CONST * (rigid_body_comp.mass + mass_center.second.first) / static_cast<float>(glm::pow(distance, 2));
-      const glm::vec2& force_to_apply = direction_normalized * std::min(gravity_force, MAX_GRAVITY_FORCE);
-
-      if (rigid_body_comp.mass != 0 && rigid_body_comp.lock_position == false)
-      {
-        if (distance < 50.f)
-        {
-          rigid_body_comp.velocity -= force_to_apply * 2.f * delta_time;
-        }
-        else
-        {
-          rigid_body_comp.velocity += force_to_apply * delta_time;
-        }
+        second_body->velocity -= velocity_delta;
       }
     }
-  });
+  }
 
   // Update transform components
-  view.each([delta_time, &centers_of_mass](Entity entity, RigidBodyComponent& rigid_body_comp, TransformComponent& transform_comp) {
+  view.each([delta_time, &bodies](Entity entity, RigidBodyComponent& rigid_body_comp, TransformComponent& transform_comp) {
     if (entity.HasComponent<InactiveComponent>())
     {
       return;
@@ -113,7 +94,7 @@ void PhysicsSystem::Update(float delta_time)
       rigid_body_comp.radial_velocity = glm::sign(rigid_body_comp.radial_velocity) * rigid_body_comp.max_radial_speed;
     }
 
-    float new_rotation = transform_comp.world_transform.GetRotation() + rigid_body_comp.radial_velocity * delta_time;
+    const float new_rotation = transform_comp.world_transform.GetRotation() + rigid_body_comp.radial_velocity * delta_time;
     transform_comp.world_transform.SetRotation(new_rotation);
   });
 }

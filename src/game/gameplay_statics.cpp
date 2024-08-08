@@ -31,7 +31,7 @@
 void GameplayStatics::SpawnSun()
 {
   Entity sun = Game::CreateEntity("Sun");
-  auto& rigidbody_comp = sun.AddComponent<RigidBodyComponent>(900.f, true);
+  auto& rigidbody_comp = sun.AddComponent<RigidBodyComponent>(400.f, true);
   rigidbody_comp.radial_velocity = 400.f;
   rigidbody_comp.radial_deceleration_coef = 1.0f;
 
@@ -205,7 +205,7 @@ void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
   const glm::vec2& random_direction = GameUtils::AngleToVec2(random_angle);
 
   auto& rigidbody_comp = entity.GetComponent<RigidBodyComponent>();
-  rigidbody_comp.ignore_list = { "Player", "EnemyAsteroid", "EnemyShip" };
+  rigidbody_comp.ignore_list = { "EnemyAsteroid", "EnemyShip" };
   rigidbody_comp.mass = 1000.f;
 
   const std::string& frame_name = "ufoRed";
@@ -241,8 +241,6 @@ void SpawnUfoShip(const glm::vec2& position, CollectableType collectable)
 
   auto& health_comp = entity.GetComponent<HealthComponent>();
   health_comp.health = 5.f;
-
-  entity.RemoveComponent<ThrusterComponent>();
 }
 
 void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collectable)
@@ -308,8 +306,6 @@ void SpawnAsteroid(const glm::vec2& position, int level, CollectableType collect
 
   auto& health_comp = entity.GetComponent<HealthComponent>();
   health_comp.health = 1.f;
-
-  entity.RemoveComponent<ThrusterComponent>();
 }
 
 Entity SpawnExplosionEffect(Transform transform)

@@ -31,7 +31,6 @@ Entity EnemiesPool::OnCreate()
   entity.AddComponent<DamageDealerComponent>(1.f, entity);
   entity.AddComponent<HealthComponent>(1.f);
   entity.AddComponent<PoolPropertyComponent>(EntityPoolType::ENEMY);
-  entity.AddComponent<ThrusterComponent>(glm::vec2(-45.f, -45.f));
   entity.AddComponent<InputComponent>();
   entity.AddComponent<MovementComponent>();
 

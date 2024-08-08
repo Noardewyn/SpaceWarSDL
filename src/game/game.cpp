@@ -49,6 +49,8 @@ Game::Game(GameParams& params)
   : params(params),
   window(params.screen_width, params.screen_height, params.window_name)
 {
+  tools::Logger::Init(params.log_level);
+
   LOG_INFO("Init Game...");
 
   _instance = this;
