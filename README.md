@@ -1,6 +1,5 @@
 # SpacewarSDL
 Spacewar  game remake on SDL2
-With addition of enemies
  
 ## Getting Started
 Visual Studio 2022 is recommended
