@@ -1,5 +1,15 @@
 # SpacewarSDL
 Spacewar  game remake on SDL2
+
+Written in pure SDL, without using a game engine
+ 
+Used EСS architecture
+
+
+With additional features:
+* Multiple enemies types
+* Levels with a gradual increase in the level of difficulty
+* Powerups and player ship improvements
  
 ## Getting Started
 Visual Studio 2022 is recommended
